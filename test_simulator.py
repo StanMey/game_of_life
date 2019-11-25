@@ -1,3 +1,4 @@
+import unittest
 from unittest import TestCase
 from Simulator import *
 
@@ -44,3 +45,25 @@ class TestSimulator(TestCase):
         self.sim.set_world(world)
         self.assertIsInstance(self.sim.get_world(), World)
         self.assertIs(self.sim.get_world(), world)
+
+    def test_evolve_generation(self):
+        """
+        Tests whether a cell gets correctly evolved:
+            - a cell with less than 2 living neighbours dies;
+            - a cell with more than 3 living neighbours dies;
+            - a cell with 2 or 3 living neighbours survives;
+            - a dead cell with exactly 3 living neighbours comes back to life;
+        """
+        # less than 2 living neighbours
+        self.assertEqual(self.sim.next_state([0, 0, 0, 0, 0, 0, 0, 0]), 0)
+        self.assertEqual(self.sim.next_state([0, 0, 1, 0, 0, 0, 0, 0]), 0)
+        # more than 3 living neighbours
+        self.assertEqual(self.sim.next_state([0, 0, 1, 0, 1, 0, 1, 1]), 0)
+        self.assertEqual(self.sim.next_state([1, 0, 1, 0, 1, 0, 1, 1]), 0)
+        # 2 or 3 living neighbours
+        self.assertEqual(self.sim.next_state([0, 0, 1, 0, 1, 0, 0, 0]), 1)
+        self.assertEqual(self.sim.next_state([1, 0, 0, 0, 1, 0, 0, 1]), 1)
+
+
+if __name__ == '__main__':
+    unittest.main()
