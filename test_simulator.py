@@ -46,23 +46,31 @@ class TestSimulator(TestCase):
         self.assertIsInstance(self.sim.get_world(), World)
         self.assertIs(self.sim.get_world(), world)
 
+    def test_get_ruleset(self):
+        """
+        Tests whether the ruleset gets handled correctly
+        """
+        self.assertEqual(self.sim.get_ruleset("B358/S237"), (2, 3, 5, 7, 8))
+        self.assertEqual(self.sim.get_ruleset("B67/S12"), (1, 2, 6, 7))
+        self.assertEqual(self.sim.get_ruleset("B3/S23"), (2, 3))
+        self.assertEqual(self.sim.get_ruleset("B/S"), ())
+
     def test_evolve_generation(self):
         """
-        Tests whether a cell gets correctly evolved:
-            - a cell with less than 2 living neighbours dies;
-            - a cell with more than 3 living neighbours dies;
-            - a cell with 2 or 3 living neighbours survives;
-            - a dead cell with exactly 3 living neighbours comes back to life;
+        Tests whether a cell gets correctly evolved based on the rules:
+        with the ruleset and information about the neighbours it returns whether a cell lives or dies
+
         """
-        # less than 2 living neighbours
-        self.assertEqual(self.sim.next_state([0, 0, 0, 0, 0, 0, 0, 0]), 0)
-        self.assertEqual(self.sim.next_state([0, 0, 1, 0, 0, 0, 0, 0]), 0)
-        # more than 3 living neighbours
-        self.assertEqual(self.sim.next_state([0, 0, 1, 0, 1, 0, 1, 1]), 0)
-        self.assertEqual(self.sim.next_state([1, 0, 1, 0, 1, 0, 1, 1]), 0)
-        # 2 or 3 living neighbours
-        self.assertEqual(self.sim.next_state([0, 0, 1, 0, 1, 0, 0, 0]), 1)
-        self.assertEqual(self.sim.next_state([1, 0, 0, 0, 1, 0, 0, 1]), 1)
+        # the cell survives or lives
+        self.assertEqual(self.sim.next_state((2, 3, 5, 7, 8), [0, 1, 0, 0, 1, 0, 0, 0]), 1)
+        self.assertEqual(self.sim.next_state((2, 3, 5, 7), [0, 1, 0, 0, 1, 0, 1, 0]), 1)
+        self.assertEqual(self.sim.next_state((7, 8), [1, 1, 1, 1, 1, 1, 1, 0]), 1)
+        self.assertEqual(self.sim.next_state((1, 8), [0, 1, 0, 0, 0, 0, 0, 0]), 1)
+        # the cell dies
+        self.assertEqual(self.sim.next_state((2, 3, 5, 7, 8), [0, 0, 0, 0, 0, 0, 0, 0]), 0)
+        self.assertEqual(self.sim.next_state((2, 3, 5, 7), [0, 1, 0, 1, 0, 1, 0, 1]), 0)
+        self.assertEqual(self.sim.next_state((7, 8), [0, 1, 0, 1, 0, 0, 0, 0]), 0)
+        self.assertEqual(self.sim.next_state((1, 8), [0, 0, 0, 0, 0, 0, 0, 0]), 0)
 
 
 if __name__ == '__main__':
