@@ -42,8 +42,7 @@ class Simulator:
         #TODO: Do something to evolve the generation
         for x in range(0, self.get_world().height):
             for y in range(0, self.get_world().width):
-                all_neighbours = self.get_world().get_neighbours(x, y)
-                self.get_world().set(x, y, value=self.next_state(all_neighbours))
+                self.get_world().set(x, y, value=self.next_state(self.get_world().get_neighbours(x, y)))
 
         return self.world
 
