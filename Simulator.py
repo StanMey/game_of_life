@@ -39,11 +39,15 @@ class Simulator:
         :return: New state of the world.
         """
         self.generation += 1
-        #TODO: Do something to evolve the generation
+        # copy the old world
+        new_world = World(110)
+
+        # TODO: Do something to evolve the generation
         for x in range(0, self.get_world().height):
             for y in range(0, self.get_world().width):
-                self.get_world().set(x, y, value=self.next_state(self.get_world().get_neighbours(x, y)))
+                new_world.set(x, y, value=self.next_state(self.get_world().get_neighbours(x, y)))
 
+        self.set_world(new_world)
         return self.world
 
     def get_generation(self):
