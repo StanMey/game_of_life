@@ -8,7 +8,7 @@ class TestSimulator(TestCase):
     Tests for ``Simulator`` implementation.
     """
     def setUp(self):
-        self.sim = Simulator()
+        self.sim = Simulator("B3/S23")
 
     def test_update(self):
         """
