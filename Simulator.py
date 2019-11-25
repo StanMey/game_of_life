@@ -21,8 +21,8 @@ class Simulator:
 
     def next_state(self, neighbours):
         """
-        :param neighbours:
-        :return:
+        :param neighbours: gets an array of all the values of the neighbours
+        :return: whether a cell lives or dies
         """
         nb_amount = sum(neighbours)
         if nb_amount < 2:
