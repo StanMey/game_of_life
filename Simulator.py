@@ -22,8 +22,8 @@ class Simulator:
 
     def get_ruleset(self, rules):
         """
-
-        :return:
+        Gets a rule set in the form of a String and returns a set of rules
+        :return: a set with all the amounts of neighbours on which a cell comes back to life
         """
         split_rules = rules.split("/")
         birth_rule = list(map(int, split_rules[0].split("B")[1]))
@@ -35,15 +35,17 @@ class Simulator:
 
     def next_state(self, rules, neighbours):
         """
-        :param rules:
+        :param rules: gets a set of rules on which a cell comes back to life
         :param neighbours: gets an array of all the values of the neighbours
         :return: whether a cell lives or dies
         """
         nb_amount = sum(neighbours)
+        result = 0
         if nb_amount in rules:
-            return 1
+            result = 1
         else:
-            return 0
+            result = 0
+        return result
 
     def update(self) -> World:
         """
