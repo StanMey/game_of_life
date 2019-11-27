@@ -26,9 +26,7 @@ class Simulator:
         :param rules: The String with the rules of the game
         :return: Bool that says if the normal game is started
         """
-        split_rules = rules.split("/")
-        is_normal = len(split_rules) == 2
-        return is_normal
+        return len(rules.split("/")) == 2
 
     def get_fertility_set(self, fertile_numb):
         """
@@ -71,17 +69,19 @@ class Simulator:
             birth_rule = list(map(int, split_rules[0].split("B")[1]))
             survive_rule = list(map(int, split_rules[1].split("S")[1]))
 
+            # add the two rules together
             rule_set = birth_rule + survive_rule
+
+            # sort the list and remove the duplicates
             rule_set = tuple(dict.fromkeys(sorted(rule_set)))
         else:
             split_rules = rules.split("/")
             birth_rule = tuple(map(int, split_rules[0].split("B")[1]))
             survive_rule = tuple(map(int, split_rules[1].split("S")[1]))
-
-            fertile_numb = int(split_rules[2].split("A")[1])
-            fertile_rule = self.get_fertility_set(fertile_numb)
-
+            fertile_rule = self.get_fertility_set(int(split_rules[2].split("A")[1]))
+            # append all the rules into one tuple
             rule_set = (birth_rule, survive_rule, fertile_rule)
+
         return rule_set
 
     def next_state(self, normal_game, current_state, rules, neighbours):
@@ -95,10 +95,12 @@ class Simulator:
         """
         if normal_game:
             # playing a normal game
-            nb_amount = sum(neighbours)
+            nb_amount = sum(1 for x in neighbours if x > 0)
             if nb_amount in rules:
+                # the cell gives birth/survives
                 result = 1
             else:
+                # the cell dies
                 result = 0
         else:
             # not playing a normal game
@@ -127,7 +129,6 @@ class Simulator:
     def update(self) -> World:
         """
         Updates the state of the world to the next generation. Uses rules for evolution.
-
         :return: New state of the world.
         """
         self.generation += 1
@@ -137,16 +138,16 @@ class Simulator:
         # make a new world
         new_world = World(110)
 
-        # TODO: Do something to evolve the generation
+        # retrieve the next value and update every cell
         for x in range(0, self.get_world().height):
             for y in range(0, self.get_world().width):
-                # get the values
+
+                # get the values for the current state and current neighbours
                 current_state = self.get_world().get(x, y)
-                neighbours = self.get_world().get_neighbours(x, y)
-                # find the new value
-                new_value = self.next_state(normal_game, current_state, current_rules, neighbours)
-                # update the new world
-                new_world.set(x, y, value=new_value)
+                curr_neighbours = self.get_world().get_neighbours(x, y)
+
+                # get new value and update the new world
+                new_world.set(x, y, value=self.next_state(normal_game, current_state, current_rules, curr_neighbours))
 
         self.set_world(new_world)
         return self.world
